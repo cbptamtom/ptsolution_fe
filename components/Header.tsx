@@ -2,6 +2,7 @@
 
 import { ModeToggle } from "@/app/components/Theme-toggle";
 import ThemeToggler from "@/app/components/Theme-toggle2";
+import MainLogo from "@/app/images/mainLogo";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -19,9 +20,9 @@ const Header = () => {
 	return (
 		<header>
 			<nav className="px-4 lg:px-6 py-2.5">
-				<div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+				<div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4">
 					<Link href="/" className="flex items-center">
-						<Image src="/myLogo.svg" alt="logo" width={46} height={46} className="flex items-center" />
+						<MainLogo />
 						<span
 							className="hidden lg:flex pl-5 self-center text-xl font-semibold whitespace-nowrap "
 							style={{ lineHeight: "0.8" }}
@@ -38,7 +39,7 @@ const Header = () => {
 					</Link>
 
 					<div className="flex items-center lg:order-2">
-						<div className="pr-5">
+						<div className="pr-5 hidden lg:flex">
 							<ModeToggle />
 							{/* <ThemeToggler /> */}
 						</div>

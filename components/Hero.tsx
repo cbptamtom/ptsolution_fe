@@ -4,13 +4,13 @@ import React from "react";
 
 const Hero = () => {
 	return (
-		<section id="hero" className="dark:pg-darkColor lg:my-60 my-10">
-			<div className="grid max-w-screen-xl  mx-auto lg:gap-8 xl:gap-0  lg:grid-cols-12">
+		<section id="hero" className="dark:pg-darkColor lg:my-62 my-32 py-32">
+			<div className="grid max-w-screen-xl  mx-auto lg:gap-8 xl:gap-0  lg:grid-cols-12 px-4">
 				<div className="mr-auto place-self-center lg:col-span-7">
-					<h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl  ">
-						Hi there, <br />I am Tam
+					<h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl ">
+						Hi there, <br />I am <span className="text-green-800">Tam</span>
 					</h1>
-					<div className=" max-w-2xl mb-6 mt-2 font-light lg:mb-8 md:text-lg lg:text-xl  text-lg text-slate-600 dark:text-slate-400 ">
+					<div className=" max-w-2xl my-6 font-light lg:mb-8 md:text-lg lg:text-xl  text-lg text-slate-600 dark:text-slate-400 ">
 						I am a Civil Engineering graduate who has embraced a career transition towards coding due to my
 						strong passion for programming and technology. I am dedicated to immersing myself in learning
 						all aspects of technology within the construction industry. My goal is to create innovative
