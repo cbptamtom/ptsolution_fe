@@ -8,17 +8,19 @@ const Hero = () => {
 			<div className="grid max-w-screen-xl  mx-auto lg:gap-8 xl:gap-0  lg:grid-cols-12 px-4">
 				<div className="mr-auto place-self-center lg:col-span-7">
 					<h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl ">
-						Hi there, <br />I am <span className="text-green-800">Tam</span>
+						Hi there, <br />I am{" "}
+						<span className="text-content-green-light dark:text-content-green-dark ">Tam</span>
 					</h1>
-					<div className=" max-w-2xl my-6 font-light lg:mb-8 md:text-lg lg:text-xl  text-lg text-slate-600 dark:text-slate-400 ">
+					<div className=" max-w-2xl my-6 font-light lg:mb-8 md:text-lg lg:text-xl  text-lg text-slate-600 dark:text-content-color ">
 						I am a Civil Engineering graduate who has embraced a career transition towards coding due to my
 						strong passion for programming and technology. I am dedicated to immersing myself in learning
 						all aspects of technology within the construction industry. My goal is to create innovative
 						products that provide substantial benefits to the AEC (Architecture, Engineering, and
 						Construction) industry.
 					</div>
+
 					<Link
-						href="#"
+						href="services"
 						className="bg-green-600 text-white inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center  rounded-lg  hover:bg-green-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900 dark:hover:bg-gray-700"
 					>
 						My services
@@ -38,7 +40,7 @@ const Hero = () => {
 
 					<Link
 						href="#"
-						className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center dark:hover:bg-gray-700  border-black rounded-lg focus:ring-4 focus:ring-gray-100 hover:bg-gray-200 "
+						className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center dark:hover:bg-gray-700 dark:hover:text-green-500 border-black rounded-lg focus:ring-4 focus:ring-gray-100 hover:bg-gray-200 "
 					>
 						Contact me
 					</Link>

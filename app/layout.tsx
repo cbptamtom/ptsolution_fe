@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
-import { Header } from "@/components";
 
 export const metadata: Metadata = {
 	title: "PT Solution",
@@ -13,7 +12,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		<html lang="en" suppressHydrationWarning>
 			<body className="bg-gray-50 dark:bg-darkColor">
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-					<Header />
 					{children}
 				</ThemeProvider>
 			</body>

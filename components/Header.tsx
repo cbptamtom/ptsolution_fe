@@ -7,9 +7,9 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 const menuItems = [
-	{ id: 4, href: "#blog", text: "Blog" },
-	{ id: 3, href: "#services", text: "Services" },
-	{ id: 2, href: "#about-me", text: "About me" },
+	{ id: 4, href: "/#blog", text: "Blog" },
+	{ id: 3, href: "services", text: "Services" },
+	{ id: 2, href: "/#about-me", text: "About me" },
 ];
 
 const Header = () => {
@@ -45,7 +45,7 @@ const Header = () => {
 						</div>
 						<Link
 							href="#"
-							className="focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+							className="dark:hover:text-green-500 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
 						>
 							Log in
 						</Link>

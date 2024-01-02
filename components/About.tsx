@@ -70,17 +70,23 @@ const About = () => {
 							/>
 						</div>
 						<div className="ml-10">
-							<h1 className="max-w-2xl font-bold md:text-lg lg:text-5xl text-green-800">Tam Chau</h1>
-							<div className="lg:text-2xl text-gray-700">ACE Software Developer</div>
+							<h1 className="max-w-2xl font-bold md:text-lg lg:text-5xl text-green-800 dark:text-green-500">
+								Tam Chau
+							</h1>
+							<div className="lg:text-2xl dark:text-content-color">ACE Software Developer</div>
 						</div>
 					</div>
 
 					<div className="max-w-4xl lg:max-w-7xl font-light  md:text-lg lg:text-xl ">
 						<div className="max-w-4xl lg:max-w-7xl  lg:mb-8">
-							<div className=" md:text-lg lg:text-xl text-slate-600 dark:text-slate-400  ">
+							<div className=" md:text-lg lg:text-xl text-slate-600 dark:text-content-color  ">
 								<span className="block font-light">
-									My name is <span className="text-green-800">Tam</span>. I'm passionate about
-									technology, programming, and creating products for the construction industry.
+									My name is{" "}
+									<span className="text-content-green-light dark:text-content-green-dark  font-semibold">
+										Tam
+									</span>
+									. I'm passionate about technology, programming, and creating products for the
+									construction industry.
 								</span>
 
 								<span className="block mt-3 ">

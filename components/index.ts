@@ -1,3 +1,5 @@
 import Header from "./Header";
 import Hero from "./Hero";
-export { Header, Hero };
+import Services from "./Services";
+
+export { Header, Hero, Services };
