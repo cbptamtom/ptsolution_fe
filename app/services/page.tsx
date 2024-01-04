@@ -2,7 +2,7 @@ import { Services } from "@/components";
 
 const page = () => {
 	
-	return <Services></Services>;
+	return <Services/>;
 };
 
 export default page;
