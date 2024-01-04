@@ -16,7 +16,7 @@ const MainLogo: FC<MainLogoProps> = ({
 }) => {
 	const { theme } = useTheme();
 
-	const adjustedLineFill = theme === "dark" ? "#fff" : lineFill;
+	const adjustedLineFill = theme === "dark" ? "#ffffff" : lineFill;
 
 	return (
 		<svg width={width} height={height} viewBox="0 0 46 57" fill="none" xmlns="http://www.w3.org/2000/svg">

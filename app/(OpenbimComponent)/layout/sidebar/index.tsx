@@ -21,27 +21,7 @@ const Sidebar = () => {
 						</Link>
 					</li>
 
-					{/* Sidebar Item: Kanban */}
-					<li>
-						<Link href="#">
-							<div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-								{/* Kanban Icon */}
-								<span className="flex-1 ms-3 whitespace-nowrap">Kanban</span>
-								{/* Kanban Label */}
-							</div>
-						</Link>
-					</li>
-
-					{/* Sidebar Item: Inbox */}
-					<li>
-						<Link href="#">
-							<div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-								{/* Inbox Icon */}
-								<span className="flex-1 ms-3 whitespace-nowrap">Inbox</span>
-								{/* Inbox Notification */}
-							</div>
-						</Link>
-					</li>
+					
 
 					{/* More Sidebar Items... */}
 				</ul>

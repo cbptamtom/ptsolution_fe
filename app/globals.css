@@ -6,3 +6,7 @@
 * {
 	font-family: "Inter", sans-serif;
 }
+
+#container {
+  height: calc(100vh - 65px); 
+}
