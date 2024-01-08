@@ -4,6 +4,8 @@ import { RefObject } from "react";
 import * as path from "path";
 import * as WEBIFC from "web-ifc";
 
+import Stats from "stats.js";
+
 const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => {
 	if (containerRef && containerRef.current) {
 		const container = containerRef.current;
@@ -130,13 +132,51 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 			fragmentIfcLoader.settings.webIfc.COORDINATE_TO_ORIGIN = true;
 			fragmentIfcLoader.settings.webIfc.OPTIMIZE_PROFILES = true;
 
-			// const loadIfcAsFragments = async () => {
-			// 	const file = await fetch("sample01.ifc");
-			// 	const data = await file.arrayBuffer();
-			// 	const buffer = new Uint8Array(data);
-			// 	const model = await fragmentIfcLoader.load(buffer, "example");
-			// 	scene.add(model);
+			const highlighter = new OBC.FragmentHighlighter(components);
+			const file = await fetch("small.frag");
+			const dataBlob = await file.arrayBuffer();
+			const buffer = new Uint8Array(dataBlob);
+			fragments.load(buffer);
+			highlighter.update();
+			// components.renderer.postproduction.customEffects.outlineEnabled = true;
+			// highlighter.outlinesEnabled = true;
+
+			const highlightMaterial = new THREE.MeshBasicMaterial({
+				color: "#BCF124",
+				depthTest: false,
+				opacity: 0.8,
+				transparent: true,
+			});
+			// highlighter.add("default", [highlightMaterial]);
+			// highlighter.outlineMaterial.color.set(0xf0ff7a);
+
+			let lastSelection: any;
+			let singleSelection = {
+				value: true,
+			};
+
+			// const highlightOnClick = async (event: any) => {
+			// 	const result = await highlighter.highlight("default", singleSelection.value);
+			// 	if (result) {
+			// 		lastSelection = {};
+			// 		for (const fragment of result.fragments) {
+			// 			const fragmentID = fragment.id;
+			// 			lastSelection[fragmentID] = [result.id];
+			// 		}
+			// 	}
 			// };
+			// container.addEventListener("click", (event) => highlightOnClick(event));
+
+			// const highlightOnID = () => {
+			// 	if (lastSelection !== undefined) {
+			// 		highlighter.highlightByID("default", lastSelection);
+			// 	}
+			// };
+
+			// Set up stats
+
+			//  renderer.onBeforeUpdate.add(() => stats.begin());
+			//  renderer.onAfterUpdate.add(() => stats.end());
 		}
 	}
 };
