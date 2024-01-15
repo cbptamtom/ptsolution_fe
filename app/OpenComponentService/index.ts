@@ -5,6 +5,7 @@ import * as path from "path";
 import * as WEBIFC from "web-ifc";
 
 import Stats from "stats.js";
+import { importExternalFragment } from "./obc-services";
 
 const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => {
 	if (containerRef && containerRef.current) {
@@ -12,13 +13,13 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 		if (container) {
 			const components = new OBC.Components();
 			components.scene = new OBC.SimpleScene(components);
-			components.renderer = new OBC.SimpleRenderer(components, container);
+			components.renderer = new OBC.PostproductionRenderer(components, container);
 			components.camera = new OBC.SimpleCamera(components);
 			components.raycaster = new OBC.SimpleRaycaster(components);
+
 			components.init();
 			const scene = components.scene.get();
-			// components.camera.controls.setLookAt(10, 10, 10, 0, 0, 0);
-			const grid = new OBC.SimpleGrid(components);
+			const fragments = new OBC.FragmentManager(components);
 
 			const directionalLight = new THREE.DirectionalLight();
 			directionalLight.position.set(5, 10, 3);
@@ -29,154 +30,33 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 			ambientLight.intensity = 0.5;
 			scene.add(ambientLight);
 
-			let fragments = new OBC.FragmentManager(components);
-			let fragmentIfcLoader = new OBC.FragmentIfcLoader(components);
+			const grid = new OBC.SimpleGrid(components, new THREE.Color(0x666666));
+			components.tools.add("2fd526fe-c428-49c3-9c51-f02707d9a46c", grid);
 
 			const toolbar = new OBC.Toolbar(components);
 			components.ui.addToolbar(toolbar);
-			toolbar.addChild(fragments.uiElement.get("main"));
-
-			const loadFragments = async () => {
-				if (fragments.groups.length) return;
-				// const file = await fetch("./../../resources/small.frag");
-				const file = await fetch("small.frag");
-				console.log(file);
-				const data = await file.arrayBuffer();
-				const buffer = new Uint8Array(data);
-				fragments.load(buffer);
-				// const scene = components.scene.get();
-				// scene.add(model);
-			};
 			const loadButton = new OBC.Button(components);
-			loadButton.materialIcon = "upload model";
+			loadButton.materialIcon = "Load Model";
 			toolbar.addChild(loadButton);
-			loadButton.onClick.add(async () => {
-				console.log("load Fragment");
-				await loadFragments();
-			});
+			loadButton.onClick.add(() => importExternalFragment(fragments));
 
-			const exportFragments = () => {
-				if (!fragments.groups.length) return;
-				const group = fragments.groups[0];
-				const data = fragments.export(group);
-				const blob = new Blob([data]);
-				const file = new File([blob], "small.frag");
-				download(file);
-			};
-
-			const download = (file: any) => {
-				const link = document.createElement("a");
-				link.href = URL.createObjectURL(file);
-				link.download = file.name;
-				document.body.appendChild(link);
-				link.click();
-				link.remove();
-			};
-			const exportButton = new OBC.Button(components);
-			exportButton.materialIcon = "download model";
-			toolbar.addChild(exportButton);
-			exportButton.onClick.add(() => exportFragments());
-
-			const disposeFragments = () => {
-				fragments.dispose();
-			};
-			const disposeButton = new OBC.Button(components);
-			disposeButton.materialIcon = "delete";
-			toolbar.addChild(disposeButton);
-			disposeButton.onClick.add(() => disposeFragments());
-
-			const importExternalFragment = () => {
-				if (fragments.groups.length) return;
-				const input = document.createElement("input");
-				input.type = "file";
-				input.onchange = async () => {
-					if (input.files && input.files.length > 0) {
-						const file = input.files[0];
-						if (file.name.includes(".frag")) {
-							const url = URL.createObjectURL(file);
-							const result = await fetch(url);
-							const data = await result.arrayBuffer();
-							const buffer = new Uint8Array(data);
-							fragments.load(buffer);
-						}
-					}
-					input.remove();
-					if (!input.files || input.files.length === 0) {
-						input.click();
-					}
-				};
-				input.click();
-			};
-
-			const openButton = new OBC.Button(components);
-			openButton.materialIcon = "folder_open";
-			toolbar.addChild(openButton);
-			openButton.onClick.add(() => importExternalFragment());
-
-			const mainToolbar = new OBC.Toolbar(components, { name: "Main Toolbar", position: "bottom" });
-			components.ui.addToolbar(mainToolbar);
-			const ifcButton = fragmentIfcLoader.uiElement.get("main") as OBC.Button;
-			console.log(ifcButton.name);
-			mainToolbar.addChild(ifcButton);
-
-			fragmentIfcLoader.settings.wasm = {
-				path: "https://unpkg.com/web-ifc@0.0.46/",
-				absolute: true,
-			};
-
-			const excludedCats = [WEBIFC.IFCTENDONANCHOR, WEBIFC.IFCREINFORCINGBAR, WEBIFC.IFCREINFORCINGELEMENT];
-			for (const cat of excludedCats) {
-				fragmentIfcLoader.settings.excludedCategories.add(cat);
-			}
-
-			fragmentIfcLoader.settings.webIfc.COORDINATE_TO_ORIGIN = true;
-			fragmentIfcLoader.settings.webIfc.OPTIMIZE_PROFILES = true;
-
+			//I want to need make new tool - highlight element when select
 			const highlighter = new OBC.FragmentHighlighter(components);
-			const file = await fetch("small.frag");
-			const dataBlob = await file.arrayBuffer();
-			const buffer = new Uint8Array(dataBlob);
-			fragments.load(buffer);
-			highlighter.update();
-			// components.renderer.postproduction.customEffects.outlineEnabled = true;
-			// highlighter.outlinesEnabled = true;
+			highlighter.outlineEnabled = true;
+			(components.renderer as OBC.PostproductionRenderer).postproduction.enabled = true;
 
-			const highlightMaterial = new THREE.MeshBasicMaterial({
-				color: "#BCF124",
-				depthTest: false,
-				opacity: 0.8,
-				transparent: true,
-			});
-			// highlighter.add("default", [highlightMaterial]);
-			// highlighter.outlineMaterial.color.set(0xf0ff7a);
-
-			let lastSelection: any;
-			let singleSelection = {
-				value: true,
+			const highlightElementOnClick = async () => {
+				if (!highlighter.highlightMats["mySelect"]) {
+					highlighter.setup({
+						selectName: "mySelect",
+					});
+				}
+				await highlighter.highlight("mySelect", true, false);
 			};
 
-			// const highlightOnClick = async (event: any) => {
-			// 	const result = await highlighter.highlight("default", singleSelection.value);
-			// 	if (result) {
-			// 		lastSelection = {};
-			// 		for (const fragment of result.fragments) {
-			// 			const fragmentID = fragment.id;
-			// 			lastSelection[fragmentID] = [result.id];
-			// 		}
-			// 	}
-			// };
-			// container.addEventListener("click", (event) => highlightOnClick(event));
-
-			// const highlightOnID = () => {
-			// 	if (lastSelection !== undefined) {
-			// 		highlighter.highlightByID("default", lastSelection);
-			// 	}
-			// };
-
-			// Set up stats
-
-			//  renderer.onBeforeUpdate.add(() => stats.begin());
-			//  renderer.onAfterUpdate.add(() => stats.end());
+			containerRef?.current.addEventListener("click", async () => {
+				await highlightElementOnClick();
+			});
 		}
 	}
 };
