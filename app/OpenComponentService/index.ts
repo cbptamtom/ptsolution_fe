@@ -68,19 +68,6 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 			});
 			toolbar.addChild(loadButton);
 			const culler = new OBC.ScreenCuller(components);
-			loadButton.onClick.add(async () => {
-				const model = (await importExternalFragment(fragments)) as FragmentsGroup;
-				if (model) {
-					console.log(model);
-					// const classifier = components.tools.get(OBC.FragmentClassifier);
-					// const properties = await fetch("small.json");
-					// model.properties = await properties.json();
-					// classifier.byStorey(model);
-					// for (const fragment of model.items) {
-					// 	culler.add(fragment.mesh);
-					// }
-				}
-			});
 
 			//#region Highlight elem
 			const highlighter = new OBC.FragmentHighlighter(components);
@@ -132,6 +119,158 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 			containerRef.current?.addEventListener("wheel", () => (culler.needsUpdate = true));
 			culler.needsUpdate = true;
 			//#endregion
+
+			//#region fragment plan
+			const clipper = new OBC.EdgesClipper(components);
+			const sectionMaterial = new THREE.LineBasicMaterial({ color: "black" });
+			const fillMaterial = new THREE.MeshBasicMaterial({ color: "gray", side: 2 });
+			const fillOutline = new THREE.MeshBasicMaterial({
+				color: "black",
+				side: 1,
+				opacity: 0.5,
+				transparent: true,
+			});
+			clipper.styles.create("filled", new Set(), sectionMaterial, fillMaterial, fillOutline);
+			clipper.styles.create("projected", new Set(), sectionMaterial);
+			const styles = clipper.styles.get();
+			//#endregion
+
+			loadButton.onClick.add(async () => {
+				const model = (await importExternalFragment(fragments)) as FragmentsGroup;
+				if (model) {
+					const classifier = components.tools.get(OBC.FragmentClassifier);
+					const properties = await fetch("small.json");
+					model.properties = await properties.json();
+					classifier.byEntity(model);
+					classifier.byStorey(model);
+					for (const fragment of model.items) {
+						culler.add(fragment.mesh);
+					}
+					const found = classifier.find({ entities: ["IFCWALLSTANDARDCASE", "IFCWALL"] });
+					for (const fragID in found) {
+						const { mesh } = fragments.list[fragID];
+						styles.filled.fragments[fragID] = new Set(found[fragID]);
+						styles.filled.meshes.add(mesh);
+					}
+					const meshes = [];
+					for (const fragment of model.items) {
+						const { mesh } = fragment;
+						meshes.push(mesh);
+						styles.projected.meshes.add(mesh);
+					}
+
+					const whiteColor = new THREE.Color("white");
+					const whiteMaterial = new THREE.MeshBasicMaterial({ color: whiteColor });
+					const materialManager = new OBC.MaterialManager(components);
+					materialManager.addMaterial("white", whiteMaterial);
+					materialManager.addMeshes("white", meshes);
+
+					const plans = new OBC.FragmentPlans(components);
+					await plans.computeAllPlanViews(model);
+					const hider = new OBC.FragmentHider(components);
+					const highlighter = components.tools.get(OBC.FragmentHighlighter);
+					const highlightMat = new THREE.MeshBasicMaterial({
+						depthTest: false,
+						color: 0xbcf124,
+						transparent: true,
+						opacity: 0.3,
+					});
+					highlighter.add("default", [highlightMat]);
+					const canvas = components.renderer.get().domElement;
+					canvas.addEventListener("click", () => highlighter.clear("default"));
+					highlighter.update();
+
+					plans.commands = {
+						Select: async (plan) => {
+							if (plan) {
+								const found = classifier.find({ storeys: [plan.name] });
+								highlighter.highlightByID("default", found);
+							}
+						},
+						Show: async (plan) => {
+							if (plan) {
+								const found = classifier.find({ storeys: [plan.name] });
+								hider.set(true, found);
+							}
+						},
+						Hide: async (plan) => {
+							if (plan) {
+								const found = classifier.find({ storeys: [plan.name] });
+								hider.set(false, found);
+							}
+						},
+					};
+
+					const mainToolbar = new OBC.Toolbar(components);
+					mainToolbar.name = "Main Toolbar";
+					components.ui.addToolbar(mainToolbar);
+					mainToolbar.addChild(plans.uiElement.get("main"));
+					const customEffects = (components.renderer as OBC.PostproductionRenderer).postproduction
+						.customEffects;
+					plans.onNavigated.add(() => {
+						customEffects.glossEnabled = false;
+						materialManager.setBackgroundColor(whiteColor);
+						materialManager.set(true, ["white"]);
+						grid.visible = false;
+					});
+					plans.onExited.add(() => {
+						customEffects.glossEnabled = true;
+						materialManager.resetBackgroundColor();
+						materialManager.set(false, ["white"]);
+						grid.visible = true;
+					});
+
+					//#region IFC Properties
+
+					////////
+					const propsProcessor = new OBC.IfcPropertiesProcessor(components);
+					propsProcessor.uiElement.get("propertiesWindow").visible = true;
+					propsProcessor.process(model);
+
+					highlighter.onSetup.add(() => {
+						const highlighterEvents = highlighter.events;
+						highlighterEvents.select.onClear.add(() => {
+							propsProcessor.cleanPropertiesList();
+						});
+						highlighterEvents.select.onHighlight.add((selection) => {
+							const fragmentID = Object.keys(selection)[0];
+							const expressID = Number(Array.from(selection[fragmentID])[0]);
+							let model;
+							for (const group of fragments.groups) {
+								const fragmentFound = Object.values(group.keyFragments).find((id) => id === fragmentID);
+								if (fragmentFound) model = group;
+							}
+							if (model) {
+								propsProcessor.renderProperties(model, expressID);
+							}
+						});
+					});
+
+					highlighter.setup();
+
+					// // highlighterEvents.select.onClear.add(() => {
+					// // 	propsProcessor.cleanPropertiesList();
+					// // });
+					// highlighterEvents.select.onHighlight.add((selection) => {
+					// 	const fragmentID = Object.keys(selection)[0];
+					// 	// const expressID = Number([...selection[fragmentID]][0]);
+					// 	const expressID = Number(Array.from(selection[fragmentID])[0]);
+					// 	// const expressID = Number(Array.prototype.slice.call(selection[fragmentID])[0]);
+					// 	let model;
+					// 	for (const group of fragments.groups) {
+					// 		const fragmentFound = Object.values(group.keyFragments).find((id) => id === fragmentID);
+					// 		if (fragmentFound) model = group;
+					// 	}
+					// 	if (model) {
+					// 		propsProcessor.renderProperties(model, expressID);
+					// 	}
+					// });
+
+					components.ui.addToolbar(mainToolbar);
+					mainToolbar.addChild(propsProcessor.uiElement.get("main"));
+					//#endregion
+				}
+			});
 		}
 	}
 };
