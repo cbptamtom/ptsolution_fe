@@ -232,6 +232,7 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 						highlighterEvents.select.onClear.add(() => {
 							propsProcessor.cleanPropertiesList();
 						});
+
 						highlighterEvents.select.onHighlight.add((selection) => {
 							const fragmentID = Object.keys(selection)[0];
 							const expressID = Number(Array.from(selection[fragmentID])[0]);
@@ -247,7 +248,7 @@ const openComponent = async (containerRef: RefObject<HTMLDivElement> | null) => 
 					});
 
 					highlighter.setup();
-
+					///some bug
 					// // highlighterEvents.select.onClear.add(() => {
 					// // 	propsProcessor.cleanPropertiesList();
 					// // });
