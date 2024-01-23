@@ -5,6 +5,15 @@ const nextConfig = {
 		config.resolve.extensions.push(".ts", ".tsx");
 		return config;
 	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "cdn.sanity.io",
+				port: "",
+			},
+		],
+	},
 };
 
 module.exports = nextConfig;
