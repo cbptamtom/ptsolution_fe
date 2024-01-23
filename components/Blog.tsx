@@ -34,7 +34,7 @@ const Blog = async () => {
 							height={500}
 							className="rounded-t-lg h-[200px] object-cover"
 						/>
-						<CardContent className="mt-5">
+						{/* <CardContent className="mt-5">
 							<h3 className="text-lg line-clamp-2 font-bold">{post.title}</h3>
 							<p className="line-clamp-3 text-sm mt-2 text-gray-600 dark:text-gray-300">
 								{post.smallDescription}
@@ -42,7 +42,7 @@ const Blog = async () => {
 							<Button asChild className="w-full mt-7">
 								<Link href={`/blog/${post.currentSlug}`}>Read More</Link>
 							</Button>
-						</CardContent>
+						</CardContent> */}
 					</Card>
 				))}
 			</div>
