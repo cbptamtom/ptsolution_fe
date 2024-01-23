@@ -1,5 +1,5 @@
-import { Services } from "@/components";
 import OpenComponentService from "@/components/OpenComponentService";
+import Services from "@/components/Services";
 const page = () => {
 	return <Services />;
 };
