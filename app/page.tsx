@@ -1,6 +1,7 @@
-import { Header, Hero } from "@/components";
 import About from "@/components/About";
 import Blog from "@/components/Blog";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
 import Experiences from "@/components/Experiences";
 import Image from "next/image";
 
