@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 const menuItems = [
-	{ id: 4, href: "/#blog", text: "Blog" },
+	{ id: 4, href: "/#blog", text: "Article" },
 	{ id: 3, href: "services", text: "Services" },
 	{ id: 2, href: "/#about-me", text: "About me" },
 ];
