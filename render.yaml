@@ -1,0 +1,4 @@
+buildCommand: "yarn --frozen-lockfile install; npm run build"
+ignore:
+    - node_modules
+    - tests
