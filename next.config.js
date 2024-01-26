@@ -6,6 +6,8 @@ const nextConfig = {
 		return config;
 	},
 	images: {
+		loader: "imgix",
+		path: "/",
 		remotePatterns: [
 			{
 				protocol: "https",
